@@ -1,4 +1,4 @@
-﻿# Generated Bundle Branch
+# Snip Generated Bundle
 
 This branch contains generated release output for the Snip workshop project.
 
