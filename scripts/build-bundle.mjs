@@ -17,15 +17,30 @@ function formatCommand(command, args) {
   return [command, ...args].map((part) => (part.includes(' ') ? JSON.stringify(part) : part)).join(' ');
 }
 
+function resolveCommand(command, args) {
+  if (process.platform === 'win32' && command === 'npm') {
+    return {
+      command: process.env.ComSpec || 'cmd.exe',
+      args: ['/d', '/s', '/c', ['npm', ...args].join(' ')],
+    };
+  }
+
+  return { command, args };
+}
+
 function run(command, args, options = {}) {
   console.log(`$ ${formatCommand(command, args)}`);
-  const result = spawnSync(command, args, {
+  const resolved = resolveCommand(command, args);
+  const result = spawnSync(resolved.command, resolved.args, {
     cwd: options.cwd || repoRoot,
     stdio: 'inherit',
-    shell: process.platform === 'win32',
   });
 
   if (result.status !== 0) {
+    if (result.error) {
+      throw result.error;
+    }
+
     throw new Error(`Command failed: ${formatCommand(command, args)}`);
   }
 }
@@ -34,7 +49,6 @@ function gitQuiet(args, cwd) {
   return spawnSync('git', args, {
     cwd,
     stdio: 'ignore',
-    shell: process.platform === 'win32',
   });
 }
 
