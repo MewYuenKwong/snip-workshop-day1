@@ -1,0 +1,65 @@
+<main class="page-shell">
+  <div class="hero-glow" aria-hidden="true"></div>
+
+  <div class="page-width">
+    <header class="hero">
+      <p class="eyebrow">tiny URL shortener</p>
+      <h1>Turn long links into shareable Snips.</h1>
+      <p class="subline">Paste a URL and turn it into a compact short link in seconds.</p>
+    </header>
+
+    <form class="composer" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <input
+        formControlName="url"
+        type="url"
+        inputmode="url"
+        placeholder="https://example.com"
+        aria-label="URL to shorten"
+      />
+      <button type="submit" [disabled]="isSubmitting() || form.invalid">
+        {{ isSubmitting() ? 'Shortening...' : 'Shorten URL' }}
+      </button>
+    </form>
+
+    <div class="notice error" *ngIf="errorMessage()">
+      {{ errorMessage() }}
+    </div>
+
+    <div class="notice success" *ngIf="successMessage()">
+      {{ successMessage() }}
+    </div>
+
+    <section class="panel" aria-live="polite">
+      <div class="panel-header">
+        <h2>Recent links</h2>
+      </div>
+
+      <div class="table-wrap" *ngIf="links().length; else emptyState">
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Original URL</th>
+              <th>Hits</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let link of links()">
+              <td>
+                <a [href]="link.shortUrl" target="_blank" rel="noreferrer">{{ link.code }}</a>
+              </td>
+              <td class="url-cell">
+                <a [href]="link.url" target="_blank" rel="noreferrer">{{ link.url }}</a>
+              </td>
+              <td>{{ link.hits }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #emptyState>
+        <p class="empty-state">No links yet. Add the first short URL above.</p>
+      </ng-template>
+    </section>
+  </div>
+</main>
