@@ -4,10 +4,11 @@ Snip is a tiny URL shortener demo built as a single backend and two clients: a w
 
 ## Architecture
 
-- `backend/` — Bun API service
-- `frontend/` — Angular app
-- `cli/` — Node CLI
-- `main` — the superproject that pins each layer as a submodule
+- `backend/` - Bun API service
+- `frontend/` - Angular app
+- `cli/` - Node CLI
+- `bundle/` - generated release output
+- `main` - the superproject that pins each layer as a submodule
 
 ## API contract
 
@@ -25,9 +26,25 @@ main
 +- backend/   (submodule -> backend branch)
 +- frontend/  (submodule -> frontend branch)
 +- cli/       (submodule -> cli branch)
++- bundle/    (submodule -> bundle branch)
 +- README.md
 +- .gitmodules
++- scripts/build-bundle.mjs
 +- ...
+```
+
+## Generated release bundle
+
+The `bundle` branch is generated output. Do not hand-edit it. From the `main` superproject checkout, rebuild it with:
+
+```bash
+node scripts/build-bundle.mjs
+```
+
+The script updates the source submodules, builds the Angular frontend, assembles `bundle/`, commits generated changes in the `bundle` submodule, and bumps submodule pointers on `main`. Add `--push` to publish both `bundle` and `main`:
+
+```bash
+node scripts/build-bundle.mjs --push
 ```
 
 ## Clone this repo
